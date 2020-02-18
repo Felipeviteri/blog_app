@@ -1,6 +1,8 @@
 # blog_app
 Desenvolvimento do primeiro blog com NodeJS.
 
+Este projeto em como base o aprendizado do NodeJS.
+
 Criação de um blog para postagens de categorias e conteúdos.
 
 Pacotes utilizados:
