@@ -11,6 +11,7 @@ router.get('/', function(req,res){
     res.render("admin/index")
 })
 
+
 router.get('/posts', function(req, res){
     res.send("pagina de Posts")
 })
@@ -173,7 +174,7 @@ router.post("/postagens/nova", function(req,res){
     }
 })
 
-router.get('/postagens/edit/:id', function(req, res){
+router.get('/postagens/editar/:id', function(req, res){
 
     Postagem.findOne({_id: req.params.id}).then(function(postagens){
         Categoria.find().then(function(categorias){
@@ -189,7 +190,7 @@ router.get('/postagens/edit/:id', function(req, res){
     })
 })
 
-router.post('/postagens/edit', function(req,res){
+router.post('/postagens/editar', function(req,res){
     // ------------------ fazer validadacao--------------------------
     Postagem.findOne({_id: req.body.id}).then(function(postagem){
         postagem.titulo = req.body.titulo
