@@ -10,7 +10,8 @@ const session = require('express-session')
 const flash = require('connect-flash')
 require('./models/Postagem') //chama o arquivo de model
 const Postagem = mongoose.model('Postagens') // passa a referencia do model para variavel
-
+require('./models/Categoria') //chama o arquivo de model
+const Categoria = mongoose.model('Categorias') // passa a referencia do model para variavel
 
 
 // Configuracoes
@@ -82,10 +83,41 @@ const Postagem = mongoose.model('Postagens') // passa a referencia do model para
         res.send("Erro 404!")
     })
 
-    // Rota dos Posts
-    app.get('/posts', function(req,res){
-        res.send("Lista posts")
+    // Rota das Categorias
+    app.get('/categorias', function(req,res){
+        Categoria.find().then(function(categorias){
+            res.render('categorias/index', {categorias: categorias})
+        }).catch(function(erro){
+            req.flash("error_msg", "Houve um erro interno ao listar as categorias")
+            req.redirect('/')
+        })
     })
+
+    // Rota links Categorias
+    app.get('/categorias/:slug', function(req,res){
+        Categoria.findOne({slug: req.params.slug}).then(function(categoria){
+            if(categoria){
+                Postagem.find({categoria: categoria._id}).then(function(postagens){
+                    console.log(postagens)
+                    console.log(categoria)
+                    res.render('categorias/postagens', {postagens: postagens, categoria: categoria})
+                }).catch(function(erro){
+                    console.log(erro)
+                    console.log(postagens)
+                    req.flash("error_msg", "Houve um erro ao listar as postagens !")
+                })
+            } else {
+                req.flash("error_msg", "Esta categoria nao existe")
+                res.redirect('/')
+            }
+        }).catch(function(erro){
+            console.log(erro)
+            req.flash("error_msg", "Houve um erro interno ao carregar a pagina desta categoria")
+            res.redirect('/')
+        })
+    })
+
+
 
     // Rota Admin - 
     app.use('/admin', admin)
