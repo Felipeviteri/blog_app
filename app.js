@@ -15,7 +15,7 @@ const Categoria = mongoose.model('Categorias') // passa a referencia do model pa
 const usuarios = require('./routes/usuarios')
 const passport = require('passport')
 require('./config/auth')(passport) // chama o arquivo de config auth
-const db = require('./config/db')
+const db = require('./config/db')// chama o arquivo de config db 
 
 
 // Configuracoes
