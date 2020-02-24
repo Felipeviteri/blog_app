@@ -12,6 +12,10 @@ require('./models/Postagem') //chama o arquivo de model
 const Postagem = mongoose.model('Postagens') // passa a referencia do model para variavel
 require('./models/Categoria') //chama o arquivo de model
 const Categoria = mongoose.model('Categorias') // passa a referencia do model para variavel
+const usuarios = require('./routes/usuarios')
+const passport = require('passport')
+require('./config/auth')(passport) // chama o arquivo de config auth
+const db = require('./config/db')
 
 
 // Configuracoes
@@ -22,11 +26,16 @@ const Categoria = mongoose.model('Categorias') // passa a referencia do model pa
         resave: true,
         saveUninitialized: true
     }))
+    // Passport e flash (sempre nesta ordem)
+    app.use(passport.initialize())
+    app.use(passport.session())
     app.use(flash())
     // Midlleware
     app.use(function(req,res, next){
         res.locals.success_msg = req.flash("success_msg") // criar variavel global .locals
         res.locals.error_msg = req.flash("error_msg")
+        res.locals.error = req.flash("error")
+        res.locals.user = req.user || null //armazenar dados do usuario logado (passport)
         next()
     })
     // Body-parser
@@ -37,7 +46,7 @@ const Categoria = mongoose.model('Categorias') // passa a referencia do model pa
     app.set('view engine', 'handlebars')
     // Mongoose
     mongoose.Promise = global.Promise;
-    mongoose.connect('mongodb://localhost/blogapp', {
+    mongoose.connect(db.mongoURI, {
         useNewUrlParser: true,
         useUnifiedTopology: true
     }).then(function(){
@@ -123,9 +132,13 @@ const Categoria = mongoose.model('Categorias') // passa a referencia do model pa
     app.use('/admin', admin)
 
 
+    // Rota Usuarios
+    app.use('/usuarios', usuarios)
+
+
 
 // Outros
-const PORT = 3000
+const PORT = process.env.PORT || 3000
 app.listen(PORT, function(){
     console.log("Servidor Rodando!")
 })

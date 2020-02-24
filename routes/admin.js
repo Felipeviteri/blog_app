@@ -6,17 +6,18 @@ require('../models/Categoria') //chama o arquivo de model
 const Categoria = mongoose.model('Categorias') // passa a referencia do model para variavel
 require('../models/Postagem') //chama o arquivo de model
 const Postagem = mongoose.model('Postagens') // passa a referencia do model para variavel
+const {eAdmin} = require ('../helpers/eAdmin') // pegando somente a funcao eAdmin 
 
-router.get('/', function(req,res){
+router.get('/', eAdmin, function(req,res){
     res.render("admin/index")
 })
 
 
-router.get('/posts', function(req, res){
+router.get('/posts', eAdmin, function(req, res){
     res.send("pagina de Posts")
 })
 
-router.get('/categorias', function(req, res){
+router.get('/categorias', eAdmin, function(req, res){
     //funcao para listar todos os documentos que existe
     Categoria.find().sort({date:'desc'}).then(function(categorias){
         res.render("admin/categorias", {categorias: categorias})
@@ -26,13 +27,13 @@ router.get('/categorias', function(req, res){
     })
 })
 
-router.get('/categorias/add', function(req,res){
+router.get('/categorias/add', eAdmin, function(req,res){
     res.render("admin/addCategorias")
 })
 
 
 // --- Criar categoria com validacao de campos via POST
-router.post('/categorias/nova', function(req,res){
+router.post('/categorias/nova', eAdmin, function(req,res){
 
     // Cadastrar uma validacao manual com array
     var erros = []
@@ -76,7 +77,7 @@ router.post('/categorias/nova', function(req,res){
 })
 
 // --- Rota para coletar e editar categoria ---
-router.get("/categorias/editar/:id", function(req,res){
+router.get("/categorias/editar/:id", eAdmin, function(req,res){
     Categoria.findOne({_id:req.params.id}).then(function(categoria){
         res.render("admin/editCategorias", {categoria: categoria})
     }).catch(function(erro){
@@ -86,7 +87,7 @@ router.get("/categorias/editar/:id", function(req,res){
 })
 
 // --- Editando as categorias via POST ---
-router.post("/categorias/editar", function(req,res){
+router.post("/categorias/editar", eAdmin, function(req,res){
     Categoria.findOne({_id: req.body.id}).then(function(categoria){
 
         categoria.nome = req.body.nome
@@ -107,7 +108,7 @@ router.post("/categorias/editar", function(req,res){
 })
 
 // --- Deletando as categorias via POST ---
-router.post("/categorias/deletar", function(req,res){
+router.post("/categorias/deletar", eAdmin, function(req,res){
     Categoria.deleteOne({_id: req.body.id}).then(function(){
         req.flash("success_msg", "Categoria Deletada com sucesso!")
         res.redirect("/admin/categorias")
@@ -117,7 +118,7 @@ router.post("/categorias/deletar", function(req,res){
     })
 })
 
-router.get("/postagens", function(req,res){
+router.get("/postagens", eAdmin, function(req,res){
     Postagem.find().populate('categoria').sort({date: 'desc'}).then(function(postagens){
         res.render("admin/postagens", {postagens: postagens})
     }).catch(function(erro){
@@ -126,7 +127,7 @@ router.get("/postagens", function(req,res){
     })
 })
 
-router.get("/postagens/add", function(req,res){
+router.get("/postagens/add", eAdmin, function(req,res){
     Categoria.find().then(function(categorias){
         res.render("admin/addPostagens", {categorias: categorias})
     }).catch(function(erro){
@@ -135,7 +136,7 @@ router.get("/postagens/add", function(req,res){
     })
 })
 
-router.post("/postagens/nova", function(req,res){
+router.post("/postagens/nova", eAdmin, function(req,res){
 
     var erros = []
 
@@ -174,7 +175,7 @@ router.post("/postagens/nova", function(req,res){
     }
 })
 
-router.get('/postagens/editar/:id', function(req, res){
+router.get('/postagens/editar/:id', eAdmin, function(req, res){
 
     Postagem.findOne({_id: req.params.id}).then(function(postagens){
         Categoria.find().then(function(categorias){
@@ -190,7 +191,7 @@ router.get('/postagens/editar/:id', function(req, res){
     })
 })
 
-router.post('/postagens/editar', function(req,res){
+router.post('/postagens/editar', eAdmin, function(req,res){
     // ------------------ fazer validadacao--------------------------
     Postagem.findOne({_id: req.body.id}).then(function(postagem){
         postagem.titulo = req.body.titulo
@@ -216,7 +217,7 @@ router.post('/postagens/editar', function(req,res){
 })
 
 // --- Deletando Postagens --- METODO 2
-router.get('/postagens/deletar/:id', function(req,res){
+router.get('/postagens/deletar/:id', eAdmin, function(req,res){
     Postagem.deleteOne({_id: req.params.id}).then(function(){
         req.flash("success_msg", "Postagem deletada com sucesso!")
         res.redirect('/admin/postagens')
