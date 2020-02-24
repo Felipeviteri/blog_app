@@ -35,7 +35,7 @@ const db = require('./config/db')// chama o arquivo de config db
         res.locals.success_msg = req.flash("success_msg") // criar variavel global .locals
         res.locals.error_msg = req.flash("error_msg")
         res.locals.error = req.flash("error")
-        res.locals.user = req.user || null //armazenar dados do usuario logado (passport)
+        res.locals.user = req.user || null; //armazenar dados do usuario logado (passport)
         next()
     })
     // Body-parser
