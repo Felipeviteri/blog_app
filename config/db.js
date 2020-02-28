@@ -6,7 +6,7 @@
 
 if (process.env.NODE_ENV == "production"){
     // --- Web ---
-    module.exports = {mongoURI: "mongodb+srv://blogapp:Felipe1402!@#@blogapp-prod-hpdc5.gcp.mongodb.net/test?retryWrites=true&w=majority"}
+    module.exports = {mongoURI: "mongodb+srv://<user>:<password>@blogapp-prod-hpdc5.gcp.mongodb.net/test?retryWrites=true&w=majority"}
 } else {
     // --- Local ---
     module.exports = {mongoURI: 'mongodb://localhost/blogapp'}
